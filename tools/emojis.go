@@ -751,6 +751,17 @@ var Emoji = map[string]string{
 	"diplomat": "🤵", "diplomats": "🤵",
 	"foreign": "🌍", "foreigners": "🌍", "foreigner": "🌍",
 	"oracle": "🔮", "oracles": "🔮", "predictor": "🔮", "predictors": "🔮",
+	"dies": "💀",
+	"q&a":  "❓",
+	"jew":  "✡️", "jewish": "✡️", "rabbi": "✡️", "rabbis": "✡️", "synagogue": "🕍", "synagogues": "🕍",
+	"christian": "✝️", "christians": "✝️", "church": "⛪", "churches": "⛪",
+	"muslim": "☪️", "muslims": "☪️", "mosque": "🕌", "mosques": "🕌", "islam": "☪️",
+	"buddhist": "☸️", "buddhists": "☸️", "buddhism": "☸️", "temple": "🛕", "temples": "🛕",
+	"hindu": "🕉️", "hindus": "🕉️", "hinduism": "🕉️", "mandir": "🛕", "mandirs": "🛕",
+	"interest": "💡",
+	"rates":    "📈",
+	"human":    "👤", "humans": "👤", "humanity": "👥",
+	"contrarian": "🤔",
 }
 
 var (
