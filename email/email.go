@@ -74,7 +74,7 @@ func SendToEmail(
 
 	// Dial TLS
 	addr := fmt.Sprintf("%s:%d", smtpHost, smtpPort)
-	dialer := &net.Dialer{Timeout: 10 * time.Second}
+	dialer := &net.Dialer{Timeout: 30 * time.Second}
 	conn, err := tls.DialWithDialer(dialer, "tcp", addr, &tls.Config{
 		ServerName: smtpHost,
 	})

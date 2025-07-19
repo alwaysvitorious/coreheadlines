@@ -61,7 +61,7 @@ type SlashdotItem struct {
 
 func ParseRSSFeed(ctx context.Context, userAgents typesPkg.Agents, feed feeds.FeedConfig) ([]typesPkg.MainStruct, error) {
 	client := &http.Client{
-		Timeout: 30 * time.Second,
+		Timeout: 40 * time.Second,
 	}
 
 	req, err := http.NewRequestWithContext(ctx, "GET", feed.URL, nil)

@@ -4,12 +4,14 @@ import (
 	"context"
 	"fmt"
 	"os"
+	"sort"
 	"strconv"
 	"strings"
 	"sync"
 	"time"
 
 	"coreheadlines/dynamo"
+	"coreheadlines/economics"
 	"coreheadlines/email"
 	"coreheadlines/feeds"
 	"coreheadlines/tools"
@@ -92,6 +94,12 @@ func collectUnpublished(
 // ***
 // ****
 // ***** main
+type feedResult struct {
+	Articles []typesPkg.MainStruct
+	Snippets []string
+	Err      error
+}
+
 func runParsers(ctx context.Context, db *dynamodb.Client) error {
 	// Load SMTP/email config
 	smtpHost := os.Getenv("SMTP_HOST")
@@ -123,18 +131,12 @@ func runParsers(ctx context.Context, db *dynamodb.Client) error {
 		Reader: "Mozilla/5.0 (compatible; RSS Reader Bot 1.0)",
 	}
 
-	// Fan‑out one goroutine per feed to collect unpublished articles/snippets
-	var (
-		mu           sync.Mutex
-		allToPublish []typesPkg.MainStruct
-		allSnippets  []string
-		wg           sync.WaitGroup
-	)
+	results := make([]feedResult, len(feeds.Feeds))
+	var wg sync.WaitGroup
 
-	for _, cfg := range feeds.Feeds {
-		cfg := cfg
+	for idx, cfg := range feeds.Feeds {
 		wg.Add(1)
-		go func(fc feeds.FeedConfig) {
+		go func(i int, fc feeds.FeedConfig) {
 			defer wg.Done()
 
 			articles, err := tools.ParseRSSFeed(ctx, userAgents, fc)
@@ -144,6 +146,7 @@ func runParsers(ctx context.Context, db *dynamodb.Client) error {
 					zap.String("source", fc.Source),
 					zap.Error(err),
 				)
+				results[i].Err = err
 				return
 			}
 
@@ -153,17 +156,38 @@ func runParsers(ctx context.Context, db *dynamodb.Client) error {
 					zap.String("source", fc.Source),
 					zap.Error(err),
 				)
+				results[i].Err = err
 				return
 			}
 
-			mu.Lock()
-			allToPublish = append(allToPublish, toPub...)
-			allSnippets = append(allSnippets, snippets...)
-			mu.Unlock()
-		}(cfg)
+			results[i].Articles = toPub
+			results[i].Snippets = snippets
+		}(idx, cfg)
 	}
 
 	wg.Wait()
+
+	// Aggregate results preserving feed order
+	var (
+		allToPublish []typesPkg.MainStruct
+		allSnippets  []string
+		seen         = make(map[string]bool)
+	)
+
+	for _, res := range results {
+		if res.Err != nil {
+			continue
+		}
+
+		for i, art := range res.Articles {
+			if seen[art.GUID] {
+				continue
+			}
+			seen[art.GUID] = true
+			allToPublish = append(allToPublish, art)
+			allSnippets = append(allSnippets, res.Snippets[i])
+		}
+	}
 
 	// Nothing new -> done
 	if len(allSnippets) == 0 {
@@ -172,7 +196,7 @@ func runParsers(ctx context.Context, db *dynamodb.Client) error {
 
 	htmlBody := buildEmailHTML(allSnippets)
 
-	// Send with up to 2 attempts
+	// Send with 2 attempts max
 	const maxRetries = 2
 	var sendErr error
 	for attempt := 1; attempt <= maxRetries; attempt++ {
@@ -190,17 +214,17 @@ func runParsers(ctx context.Context, db *dynamodb.Client) error {
 			zap.Int("attempt", attempt),
 			zap.Error(sendErr),
 		)
-		// small back‑off before next try
 		if attempt < maxRetries {
 			time.Sleep(time.Duration(attempt) * time.Second)
 		}
 	}
+
 	if sendErr != nil {
 		logger.Error("Failed to send batch email after retries", zap.Error(sendErr))
 		return sendErr
 	}
 
-	// Mark published in DynamoDB
+	// Mark published
 	if err := dynamo.BatchMarkPublished(ctx, db, allToPublish); err != nil {
 		logger.Error("BatchMarkPublished failed after send",
 			zap.Int("count", len(allToPublish)), zap.Error(err),
@@ -211,9 +235,67 @@ func runParsers(ctx context.Context, db *dynamodb.Client) error {
 	return nil
 }
 
+func getEconomics() string {
+	var wg sync.WaitGroup
+
+	var fedData []economics.EconomicsResponse
+	var eurostatData []economics.EconomicsResponse
+
+	wg.Add(2)
+
+	go func() {
+		defer wg.Done()
+		fedData = economics.GetFED()
+	}()
+
+	go func() {
+		defer wg.Done()
+		eurostatData = economics.GetEurostat()
+	}()
+
+	wg.Wait()
+
+	// Flatten everything into one slice
+	var allDPs []economics.DataPoint
+	for _, resp := range fedData {
+		allDPs = append(allDPs, resp.DataPoints...)
+	}
+	for _, resp := range eurostatData {
+		allDPs = append(allDPs, resp.DataPoints...)
+	}
+
+	// Sort by the Index field
+	sort.Slice(allDPs, func(i, j int) bool {
+		return allDPs[i].Index < allDPs[j].Index
+	})
+
+	// Build HTML items in sorted order
+	var items []string
+	for _, dp := range allDPs {
+		items = append(items, fmt.Sprintf(
+			`<div style="font-family:monospace; font-size:14px; margin:0;">%s (%s): %.2f%%</div>`,
+			dp.Name, dp.Date, dp.Value,
+		))
+	}
+
+	if len(items) == 0 {
+		return ""
+	}
+	return strings.Join(items, "\n")
+}
+
 func buildEmailHTML(items []string) string {
 	sep := `<hr style="border:none;border-top:2px dashed #ccc;margin:12px 0;">`
-	bodyContent := sep + strings.Join(items, sep) + sep
+
+	economicsContent := getEconomics()
+
+	var bodyContent string
+
+	if economicsContent != "" {
+		bodyContent += sep + economicsContent
+	}
+
+	bodyContent += sep + strings.Join(items, sep) + sep
 
 	return `<!DOCTYPE html>
 <html>
@@ -236,8 +318,8 @@ func logic(ctx context.Context) error {
 	}
 	now := time.Now().In(loc)
 	hour := now.Hour()
-	if hour >= 1 && hour <= 7 {
-		logger.Info("Skipping run during off‑hours", zap.Int("hour", hour))
+	if hour >= 1 && hour <= 7 && os.Getenv("AWS_LAMBDA_RUNTIME_API") != "" {
+		// Between 1:00 and 7:59, skip processing in Lambda
 		return nil
 	}
 
