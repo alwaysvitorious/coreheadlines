@@ -777,6 +777,11 @@ var Emoji = map[string]string{
 	"header": "📰", "headers": "📰", "headlines": "📰", "headline": "📰",
 	"performance": "🏎️", "performant": "🏎️", "performing": "🏎️", "performed": "🏎️",
 	"upscale": "📈", "upscales": "📈", "upscaling": "📈", "upscaled": "📈",
+	"wish": "🌠", "wishes": "🌠", "wishing": "🌠", "wished": "🌠",
+	"give up": "🚫", "gives up": "🚫", "giving up": "🚫", "gave up": "🚫",
+	"interface": "🖥️", "interfaces": "🖥️", "interfacing": "🖥️", "monitor": "🖥️",
+	"night": "🌙", "nights": "🌙", "nighttime": "🌙",
+	"nightmare": "👻", "nightmares": "👻", "nightmarish": "👻",
 }
 
 var (

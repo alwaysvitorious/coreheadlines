@@ -242,17 +242,14 @@ func getEconomics() string {
 	var eurostatData []economics.EconomicsResponse
 
 	wg.Add(2)
-
 	go func() {
 		defer wg.Done()
 		fedData = economics.GetFED()
 	}()
-
 	go func() {
 		defer wg.Done()
 		eurostatData = economics.GetEurostat()
 	}()
-
 	wg.Wait()
 
 	// Flatten everything into one slice
@@ -264,18 +261,22 @@ func getEconomics() string {
 		allDPs = append(allDPs, resp.DataPoints...)
 	}
 
-	// Sort by the Index field
+	// Sort the Index field
 	sort.Slice(allDPs, func(i, j int) bool {
 		return allDPs[i].Index < allDPs[j].Index
 	})
 
 	// Build HTML items in sorted order
 	var items []string
-	for _, dp := range allDPs {
+	for idx, dp := range allDPs {
 		items = append(items, fmt.Sprintf(
 			`<div style="font-family:monospace; font-size:14px; margin:0;">%s (%s): %.2f%%</div>`,
 			dp.Name, dp.Date, dp.Value,
 		))
+		// every 2nd item, add blank line
+		if (idx+1)%2 == 0 && idx+1 < len(allDPs) {
+			items = append(items, `<br/>`)
+		}
 	}
 
 	if len(items) == 0 {
