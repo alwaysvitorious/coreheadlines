@@ -92,9 +92,24 @@ func ParseRSSFeed(ctx context.Context, userAgents typesPkg.Agents, feed feeds.Fe
 		req.Header.Set("Sec-Fetch-Site", "none")
 	}
 
-	resp, err := client.Do(req)
+	var resp *http.Response
+	const maxRetries = 3
+
+	for i := range maxRetries {
+		resp, err = client.Do(req)
+		if err == nil {
+			break
+		}
+
+		if i < maxRetries-1 {
+			wait := time.Duration(500*(1<<i)) * time.Millisecond // Exponential backoff
+			fmt.Printf("Attempt %d: failed to fetch %s: %v. Retrying in %v...\n", i+1, feed.URL, err, wait)
+			time.Sleep(wait)
+		}
+	}
+
 	if err != nil {
-		return nil, fmt.Errorf("failed to make request: %w", err)
+		return nil, fmt.Errorf("failed to make request after retries: %w", err)
 	}
 	defer resp.Body.Close()
 
