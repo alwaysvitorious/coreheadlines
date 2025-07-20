@@ -515,8 +515,8 @@ var Feeds = []FeedConfig{
 		EnhancedHeaders: false,
 	},
 	{
-		URL:             "https://www.reddit.com/r/cpp/.rss",
-		Source:          "reddit-cpp-questions",
+		URL:             "https://www.reddit.com/r/cpp_questions/.rss",
+		Source:          "reddit-cppquestions",
 		Header:          "r/cppquestions",
 		Topic:           "technology",
 		Agent:           "bot",

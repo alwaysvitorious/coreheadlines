@@ -800,6 +800,7 @@ var Emoji = map[string]string{
 	"hollywood": "🎬", "hollywoods": "🎬",
 	"movie": "🎥", "movies": "🎥",
 	"cinema": "🎥", "cinemas": "🎥", "filmmaking": "🎬",
+	"code": "💻",
 }
 
 var (
