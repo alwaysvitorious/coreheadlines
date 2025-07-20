@@ -7,7 +7,7 @@ import (
 )
 
 var CountryToCode = map[string]string{
-	"europe": "EU", "eu": "EU", "european union": "EU", "euro stoxx": "EU", "eurostoxx": "EU", "european": "EU", "brussels": "EU",
+	"europe": "EU", "eu": "EU", "european union": "EU", "euro stoxx": "EU", "eurostoxx": "EU", "european": "EU", "brussels": "EU", "europa": "EU",
 	"united states": "US", "usa": "US", "america": "US", "u.s.": "US", "u.s.a.": "US", "us": "US", "U.S.": "US", "U.S": "US", "u.s": "US",
 	"s&p 500": "US", "s&p500": "US", "sp500": "US", "s&p": "US",
 	"dow jones": "US", "dow": "US", "djia": "US",
@@ -753,8 +753,8 @@ var Emoji = map[string]string{
 	"oracle": "🔮", "oracles": "🔮", "predictor": "🔮", "predictors": "🔮",
 	"dies": "💀",
 	"q&a":  "❓",
-	"jew":  "✡️", "jewish": "✡️", "rabbi": "✡️", "rabbis": "✡️", "synagogue": "🕍", "synagogues": "🕍",
-	"christian": "✝️", "christians": "✝️", "church": "⛪", "churches": "⛪",
+	"jew":  "✡️", "jewish": "✡️", "rabbi": "✡️", "rabbis": "✡️", "synagogue": "🕍", "synagogues": "🕍", "torah": "✡️",
+	"christian": "✝️", "christians": "✝️", "church": "⛪", "churches": "⛪", "bible": "✝️", "bibles": "✝️",
 	"muslim": "☪️", "muslims": "☪️", "mosque": "🕌", "mosques": "🕌", "islam": "☪️",
 	"buddhist": "☸️", "buddhists": "☸️", "buddhism": "☸️", "temple": "🛕", "temples": "🛕",
 	"hindu": "🕉️", "hindus": "🕉️", "hinduism": "🕉️", "mandir": "🛕", "mandirs": "🛕",
@@ -782,6 +782,24 @@ var Emoji = map[string]string{
 	"interface": "🖥️", "interfaces": "🖥️", "interfacing": "🖥️", "monitor": "🖥️",
 	"night": "🌙", "nights": "🌙", "nighttime": "🌙",
 	"nightmare": "👻", "nightmares": "👻", "nightmarish": "👻",
+	"studied": "📚", "studying": "📚",
+	"teaching": "📚", "teach": "📚", "teaches": "📚", "taught": "📚",
+	"clear": "✅", "clears": "✅", "clearing": "✅", "cleared": "✅",
+	"recruit": "👥", "recruits": "👥", "recruiting": "👥", "recruited": "👥",
+	"path": "🛤️", "paths": "🛤️", "pathway": "🛤️", "pathways": "🛤️",
+	"roadmap": "🗺️", "roadmaps": "🗺️", "roadmapping": "🗺️",
+	"rust": "🦀", "rustlang": "🦀",
+	"quality": "⭐", "qualities": "⭐", "qualitative": "⭐", "qualitatively": "⭐",
+	"arch": "🐧", "archlinux": "🐧",
+	"defending": "🛡️", "defends": "🛡️", "defended": "🛡️", "defend": "🛡️",
+	"science": "🔬", "scientific": "🔬",
+	"museum": "🏛️", "museums": "🏛️", "gallery": "🖼️", "galleries": "🖼️",
+	"music": "🎵", "musician": "🎤", "musicians": "🎤", "song": "🎶", "songs": "🎶",
+	"art": "🎨", "artist": "🎨", "artists": "🎨", "painting": "🖼️", "paintings": "🖼️",
+	"photography": "📸", "photo": "📸", "photos": "📸",
+	"hollywood": "🎬", "hollywoods": "🎬",
+	"movie": "🎥", "movies": "🎥",
+	"cinema": "🎥", "cinemas": "🎥", "filmmaking": "🎬",
 }
 
 var (

@@ -312,17 +312,17 @@ func buildEmailHTML(items []string) string {
 }
 
 func logic(ctx context.Context) error {
-	loc, err := time.LoadLocation("Europe/Madrid")
-	if err != nil {
-		logger.Info("Failed to load Europe/Madrid timezone, defaulting to UTC", zap.Error(err))
-		loc = time.UTC
-	}
-	now := time.Now().In(loc)
-	hour := now.Hour()
-	if hour >= 1 && hour <= 7 && os.Getenv("AWS_LAMBDA_RUNTIME_API") != "" {
-		// Between 1:00 and 7:59, skip processing in Lambda
-		return nil
-	}
+	// loc, err := time.LoadLocation("Europe/Madrid")
+	// if err != nil {
+	// 	logger.Info("Failed to load Europe/Madrid timezone, defaulting to UTC", zap.Error(err))
+	// 	loc = time.UTC
+	// }
+	// now := time.Now().In(loc)
+	// hour := now.Hour()
+	// if hour >= 1 && hour <= 7 && os.Getenv("AWS_LAMBDA_RUNTIME_API") != "" {
+	// 	// Between 1:00 and 7:59, skip processing in Lambda
+	// 	return nil
+	// }
 
 	sdkConfig, err := config.LoadDefaultConfig(ctx)
 	if err != nil {
