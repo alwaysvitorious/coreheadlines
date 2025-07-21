@@ -167,7 +167,7 @@ func ParseRSSFeed(ctx context.Context, userAgents typesPkg.Agents, feed feeds.Fe
 			posts = append(posts, post)
 		}
 		// Check if it's an Atom feed
-	} else if strings.HasPrefix(feed.Source, "reddit-") || feed.Source == "eurostat" || strings.HasPrefix(feed.Source, "github-") {
+	} else if strings.HasPrefix(feed.Source, "reddit-") || feed.Source == "eurostat" || strings.HasPrefix(feed.Source, "github-") || strings.HasPrefix(feed.Source, "il-") {
 		var atomFeed AtomFeed
 		if err := xml.Unmarshal(body, &atomFeed); err != nil {
 			return nil, fmt.Errorf("failed to parse Atom XML: %w", err)

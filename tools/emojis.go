@@ -821,6 +821,14 @@ var Emoji = map[string]string{
 	"physics": "⚛️", "physical": "⚛️", "physicist": "⚛️", "physicists": "⚛️",
 	"chemist": "⚗️", "chemists": "⚗️",
 	"biology": "🧬", "biologist": "🧬", "biologists": "🧬",
+	"secrets": "🤫",
+	"deleted": "🗑️", "deleting": "🗑️", "delete": "🗑️",
+	"compare": "⚖️", "compares": "⚖️", "comparing": "⚖️", "compared": "⚖️",
+	"comparison": "⚖️", "comparisons": "⚖️",
+	"modern": "🆕", "modernizing": "🆕", "modernized": "🆕",
+	"activity": "🏃", "activities": "🏃", "active": "🏃", "actively": "🏃",
+	"jet": "✈️", "jets": "✈️",
+	"manager": "👨‍💼", "managers": "👨‍💼", "management": "👨‍💼", "managing": "👨‍💼",
 }
 
 var (

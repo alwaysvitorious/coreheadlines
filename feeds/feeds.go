@@ -358,6 +358,14 @@ var Feeds = []FeedConfig{
 		Agent:           "bot",
 		EnhancedHeaders: false,
 	},
+	// {
+	// 	URL:             "https://www.gov.il/en/api/NewsApi/rss/6cbf57de-3976-484a-8666-995ca17899ec",
+	// 	Source:          "il-mfa",
+	// 	Header:          "israelmfa",
+	// 	Topic:           "geopolitics",
+	// 	Agent:           "reader",
+	// 	EnhancedHeaders: true,
+	// },
 	{
 		URL:             "https://www.israelhayom.com/feed/",
 		Source:          "israel-hayom",
@@ -374,14 +382,14 @@ var Feeds = []FeedConfig{
 		Agent:           "bot",
 		EnhancedHeaders: false,
 	},
-	{
-		URL:             "https://www.timesofisrael.com/feed/",
-		Source:          "times-of-israel",
-		Header:          "timesofisrael",
-		Topic:           "geopolitics",
-		Agent:           "bot",
-		EnhancedHeaders: false,
-	},
+	// {
+	// 	URL:             "https://www.timesofisrael.com/feed/",
+	// 	Source:          "times-of-israel",
+	// 	Header:          "timesofisrael",
+	// 	Topic:           "geopolitics",
+	// 	Agent:           "chrome",
+	// 	EnhancedHeaders: true,
+	// },
 	{
 		URL:             "https://www.haaretz.com/srv/haaretz-latest-headlines",
 		Source:          "haaretz",
