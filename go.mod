@@ -10,7 +10,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.45.0
 	github.com/joho/godotenv v1.5.1
 	go.uber.org/zap v1.27.0
-	golang.org/x/text v0.25.0
+	golang.org/x/net v0.44.0
 )
 
 require (
@@ -29,4 +29,5 @@ require (
 	github.com/aws/smithy-go v1.22.5 // indirect
 	github.com/stretchr/testify v1.10.0 // indirect
 	go.uber.org/multierr v1.10.0 // indirect
+	golang.org/x/text v0.29.0 // indirect
 )

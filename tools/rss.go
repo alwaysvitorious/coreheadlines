@@ -14,8 +14,7 @@ import (
 	"coreheadlines/feeds"
 	"coreheadlines/typesPkg"
 
-	"golang.org/x/text/encoding/charmap"
-	"golang.org/x/text/transform"
+	"golang.org/x/net/html/charset"
 )
 
 type AtomFeed struct {
@@ -55,6 +54,12 @@ type SlashdotRDF struct {
 type SlashdotItem struct {
 	Title string `xml:"title"`
 	Link  string `xml:"link"`
+}
+
+func decodeXML(body []byte, v any) error {
+	decoder := xml.NewDecoder(bytes.NewReader(body))
+	decoder.CharsetReader = charset.NewReaderLabel
+	return decoder.Decode(v)
 }
 
 func ParseRSSFeed(ctx context.Context, userAgents typesPkg.Agents, feed feeds.FeedConfig) ([]typesPkg.MainStruct, error) {
@@ -120,24 +125,11 @@ func ParseRSSFeed(ctx context.Context, userAgents typesPkg.Agents, feed feeds.Fe
 		return nil, fmt.Errorf("failed to read response body: %w", err)
 	}
 
-	if feed.Header == "Slashdot" {
-		reader := transform.NewReader(bytes.NewReader(body), charmap.ISO8859_1.NewDecoder())
-		convertedBody, err := io.ReadAll(reader)
-		if err != nil {
-			return nil, fmt.Errorf("failed to convert encoding: %w", err)
-		}
-
-		// Remove the encoding declaration since we've converted to UTF-8
-		bodyStr := string(convertedBody)
-		bodyStr = strings.Replace(bodyStr, `encoding="ISO-8859-1"`, `encoding="UTF-8"`, 1)
-		body = []byte(bodyStr)
-	}
-
 	var posts []typesPkg.MainStruct
 
 	if feed.Header == "Slashdot" {
 		var slashdotRDF SlashdotRDF
-		if err := xml.Unmarshal(body, &slashdotRDF); err != nil {
+		if err := decodeXML(body, &slashdotRDF); err != nil {
 			return nil, fmt.Errorf("failed to parse Slashdot RDF XML: %w", err)
 		}
 
@@ -160,7 +152,7 @@ func ParseRSSFeed(ctx context.Context, userAgents typesPkg.Agents, feed feeds.Fe
 		// Check if it's an Atom feed
 	} else if strings.HasPrefix(feed.Header, "r/") {
 		var atomFeed AtomFeed
-		if err := xml.Unmarshal(body, &atomFeed); err != nil {
+		if err := decodeXML(body, &atomFeed); err != nil {
 			return nil, fmt.Errorf("failed to parse Atom XML: %w", err)
 		}
 
@@ -199,7 +191,7 @@ func ParseRSSFeed(ctx context.Context, userAgents typesPkg.Agents, feed feeds.Fe
 	} else {
 		// Parse as RSS
 		var rss RSS
-		if err := xml.Unmarshal(body, &rss); err != nil {
+		if err := decodeXML(body, &rss); err != nil {
 			return nil, fmt.Errorf("failed to parse RSS XML: %w", err)
 		}
 

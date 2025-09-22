@@ -9,6 +9,18 @@ type FeedConfig struct {
 
 var Feeds = []FeedConfig{
 	{
+		URL:             "https://foro.elhacker.net/.xml.html;sa=news;board=34;limit=10;type=rss",
+		Header:          "elhacker",
+		Agent:           "bot",
+		EnhancedHeaders: false,
+	},
+	{
+		URL:             "https://feeds.feedburner.com/TheHackersNews",
+		Header:          "The Hacker News",
+		Agent:           "bot",
+		EnhancedHeaders: false,
+	},
+	{
 		URL:             "https://techmeme.com/feed.xml",
 		Header:          "Techmeme",
 		Agent:           "bot",
