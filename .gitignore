@@ -1,0 +1,7 @@
+*.txt
+bin/
+bin
+**/bin/
+.env
+.vscode
+.DS_Store
